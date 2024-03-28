@@ -2,10 +2,22 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * @author José Ruiz
+ * @version 1.0
+ * Fecha creación: 27/03/2024
+ * 
+ */
+
+/**
+ * Clase principal que contiene el método main para ejecutar el programa de
+ * control citas en un hospital usando un binaryHeap.
+ */
+
 public class Main {
     public static void main(String[] args) {
         // Crear un BinaryHeap de pacientes
-        BinaryHeap<Paciente> pacientes = new BinaryHeap<>();
+        BinaryHeap<String, Paciente> pacientes = new BinaryHeap<>();
 
         // Leer el archivo pacientes.txt
         try (BufferedReader br = new BufferedReader(new FileReader("pacientes.txt"))) {
@@ -19,7 +31,7 @@ public class Main {
                     String prioridad = parts[2];
 
                     // Crear un objeto Paciente y agregarlo al BinaryHeap
-                    pacientes.insert(new Paciente(nombre, sintoma, prioridad));
+                    pacientes.insert(prioridad, new Paciente(nombre, sintoma, prioridad));
                 } else {
                     System.err.println("Error: La línea no tiene el formato esperado: " + line);
                 }
@@ -28,9 +40,14 @@ public class Main {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
         
+        // Extraer y mostrar pacientes del binary heap
+        System.out.println();
+        System.out.println("Pacientes atendidos por orden de prioridad:");
         while (!pacientes.isEmpty()) {
-            Paciente paciente = pacientes.deleteMin();
-            System.out.println("- " + paciente.getNombre() + " con prioridad: " + paciente.getPrioridad());
+            Node<String, Paciente> node = pacientes.extractMin();
+            Paciente paciente = node.getValue();
+            System.out.println("Nombre: " + paciente.getNombre() + ", Síntoma: " + paciente.getSintoma() + ", Prioridad: " + paciente.getPrioridad());
         }
+        System.out.println();
     }
 }

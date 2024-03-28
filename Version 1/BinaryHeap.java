@@ -1,175 +1,110 @@
-import java.util.NoSuchElementException;
+/**
+ * Implementación de una cola de prioridad utilizando un Binary Heap.
+ *
+ * @param <K> Tipo de dato de la clave de prioridad.
+ * @param <V> Tipo de dato del valor almacenado en la cola de prioridad.
+ */
+public class BinaryHeap<K extends Comparable<K>, V> implements OwnPriorityQueue<K, V>{
+    private Node<K, V> root; // Raíz del Binary Heap
 
-public class BinaryHeap<E extends Comparable<E>> implements OwnPriorityQueue<E> {
-    private Node<E> root;
-    private int size;
-
-    public BinaryHeap() {
-        root = null;
-        size = 0;
-    }
-
-    @Override
-    public void insert(E element) {
-        Node<E> newNode = new Node<>(element);
-        if (root == null) {
-            root = newNode;
-        } else {
-            insert(root, newNode);
-        }
-        size++;
-    }
-    
-    private void insert(Node<E> node, Node<E> newNode) {
-        if (getPriority(newNode.getData()) < getPriority(node.getData())) {
-            // Nuevo elemento tiene mayor prioridad, insertar a la izquierda
-            if (node.getLeft() == null) {
-                node.setLeft(newNode);
-                newNode.setParent(node);
-            } else {
-                insert(node.getLeft(), newNode);
-            }
-        } else {
-            // Nuevo elemento tiene menor o igual prioridad, insertar a la derecha
-            if (node.getRight() == null) {
-                node.setRight(newNode);
-                newNode.setParent(node);
-            } else {
-                insert(node.getRight(), newNode);
-            }
-        }
-    }
-    
-    // Método auxiliar para obtener la prioridad de un paciente
-    private int getPriority(E patient) {
-        String priority = ((Paciente) patient).getPrioridad();
-        switch (priority) {
-            case "A":
-                return 1;
-            case "B":
-                return 2;
-            case "C":
-                return 3;
-            case "D":
-                return 4;
-            case "E":
-                return 5;
-            default:
-                return 6; // Si la prioridad no es A, B, C, D o E, se considera la prioridad más baja
-        }
-    }
-    
-    private void bubbleUp(Node<E> node) {
-        Node<E> current = node;
-        while (current.getParent() != null && current.getData().compareTo(current.getParent().getData()) < 0) {
-            swapData(current, current.getParent());
-            current = current.getParent();
-        }
+    /**
+     * Inserta un nuevo elemento con la clave y valor especificados en la cola de prioridad.
+     *
+     * @param key   Prioridad del elemento.
+     * @param value El valor del nuevo elemento.
+     */
+    public void insert(K key, V value) {
+        root = insert(root, key, value);
     }
 
-    private void swapData(Node<E> node1, Node<E> node2) {
-        E temp = node1.getData();
-        node1.setData(node2.getData());
-        node2.setData(temp);
-    }
-
-    @Override
-    public E deleteMin() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("El BinaryHeap está vacío");
-        }
-        E min = root.getData();
-        Node<E> lastNode = getLastNode();
-        if (lastNode == root) {
-            root = null; // Si solo hay un nodo, eliminarlo y establecer root como null
-        } else {
-            root.setData(lastNode.getData()); // Reemplazar el dato de la raíz con el dato del último nodo
-            removeLastNode(lastNode); // Eliminar el último nodo
-            trickleDown(root); // Reajustar el BinaryHeap después de eliminar el mínimo
-        }
-        size--;
-        return min;
-    }
-    
-
-    private Node<E> getLastNode() {
-        if (root == null) {
-            return null;
-        }
-        int nodeCount = size;
-        String path = Integer.toBinaryString(nodeCount / 2);
-        Node<E> result = root;
-        for (int i = 1; i < path.length(); i++) {
-            char direction = path.charAt(i);
-            if (direction == '0') {
-                result = result.getLeft();
-            } else {
-                result = result.getRight();
-            }
-        }
-        return result;
-    }
-
-    private void removeLastNode(Node<E> lastNode) {
-        Node<E> parent = lastNode.getParent();
-        if (parent == null) {
-            return;
-        }
-        if (parent.getLeft() == lastNode) {
-            parent.setLeft(null);
-        } else {
-            parent.setRight(null);
-        }
-    }
-
-    private void trickleDown(Node<E> node) {
-        Node<E> current = node;
-        while (current != null) {
-            Node<E> minChild = findMinChild(current);
-            if (minChild != null && minChild.getData().compareTo(current.getData()) < 0) {
-                swapData(current, minChild);
-                current = minChild;
-            } else {
-                break;
-            }
-        }
-    }
-
-    private Node<E> findMinChild(Node<E> node) {
-        if (node.getLeft() == null && node.getRight() == null) {
-            return null;
-        }
-        if (node.getLeft() == null) {
-            return node.getRight();
-        }
-        if (node.getRight() == null) {
-            return node.getLeft();
-        }
-        return node.getLeft().getData().compareTo(node.getRight().getData()) < 0 ? node.getLeft() : node.getRight();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public E peek() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("El BinaryHeap está vacío");
-        }
-        return root.getData();
-    }
-
-    private int subtreeSize(Node<E> node) {
+    /**
+     * Método privado para insertar un nuevo nodo con la clave y valor especificados en el árbol.
+     *
+     * @param node  El nodo actual en el que se está insertando.
+     * @param key   La clave del nuevo nodo.
+     * @param value El valor del nuevo nodo.
+     * @return El nodo resultante después de la inserción.
+     */
+    private Node<K, V> insert(Node<K, V> node, K key, V value) {
         if (node == null) {
-            return 0;
+            return new Node<>(key, value);
         }
-        return 1 + subtreeSize(node.getLeft()) + subtreeSize(node.getRight());
+
+        if (key.compareTo(node.getKey()) < 0) {
+            node.setLeft(insert(node.getLeft(), key, value));
+        } else {
+            node.setRight(insert(node.getRight(), key, value));
+        }
+
+        return node;
     }
+
+    /**
+     * Extrae y elimina el elemento con la mínima prioridad de la cola de prioridad.
+     *
+     * @return El nodo con la mínima prioridad.
+     */
+    public Node<K, V> extractMin() {
+        if (root == null) {
+            return null;
+        }
+
+        Node<K, V> minNode = findMinNode(root);
+        root = deleteNode(root, minNode.getKey());
+        return minNode;
+    }
+
+    /**
+     * Método privado para eliminar el nodo con la clave especificada del árbol.
+     *
+     * @param node El nodo actual en el que se está eliminando.
+     * @param key  La clave del nodo que se desea eliminar.
+     * @return El nodo resultante después de la eliminación.
+     */
+    private Node<K, V> deleteNode(Node<K, V> node, K key) {
+        if (node == null) {
+            return null;
+        }
+
+        if (key.compareTo(node.getKey()) < 0) {
+            node.setLeft(deleteNode(node.getLeft(), key));
+        } else if (key.compareTo(node.getKey()) > 0) {
+            node.setRight(deleteNode(node.getRight(), key));
+        } else {
+            if (node.getLeft() == null) {
+                return node.getRight();
+            } else if (node.getRight() == null) {
+                return node.getLeft();
+            }
+
+            node.setKey(findMinNode(node.getRight()).getKey());
+            node.setRight(deleteNode(node.getRight(), node.getKey()));
+        }
+
+        return node;
+    }
+
+    /**
+     * Encuentra y devuelve el nodo con la mínima prioridad en el árbol.
+     *
+     * @param node El nodo actual en el que se está buscando.
+     * @return El nodo con la mínima prioridad.
+     */
+    private Node<K, V> findMinNode(Node<K, V> node) {
+        Node<K, V> current = node;
+        while (current.getLeft() != null) {
+            current = current.getLeft();
+        }
+        return current;
+    }
+
+    /**
+     * Verifica nodo raiz del arbol esta vacío,
+     *
+     * @return true si el nodo raiz está vacía, false de lo contrario.
+     */
+    public boolean isEmpty() {
+        return root == null;
+    }
+
 }

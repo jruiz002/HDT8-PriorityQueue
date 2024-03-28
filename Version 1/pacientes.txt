@@ -2,3 +2,13 @@ Juan Perez, fractura de pierna, C
 Maria Ramirez, apendicitis, A
 Lorenzo Toledo, chikunguya, E
 Carmen Sarmientos, dolores de parto, B
+Pedro Rodriguez, quemadura grave, A
+Ana García, intoxicación alimentaria, B
+Luis Martínez, dolor de cabeza severo, C
+Marta Fernández, fractura de brazo, D
+Carlos López, fiebre alta, A
+Julia Pérez, dolor abdominal agudo, B
+Miguel Sánchez, accidente automovilístico, A
+Sofia Ramírez, crisis asmática, E
+David González, herida profunda en la pierna, C
+Andrea Ruiz, reacción alérgica grave, A

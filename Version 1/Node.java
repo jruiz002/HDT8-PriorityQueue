@@ -1,53 +1,96 @@
-public class Node<E> {
-    private E data; // Datos almacenados en el nodo
-    private Node<E> left; // Referencia al hijo izquierdo
-    private Node<E> right; // Referencia al hijo derecho
-    private Node<E> parent; // Referencia al padre
+/**
+ * Clase que representa un nodo en un árbol binario.
+ *
+ * @param <K> Prioridad
+ * @param <V> Valor del nodo en este caso el paciente
+ */
+public class Node<K, V> {
+    private K key;             // Clave del nodo
+    private V value;           // Valor almacenado en el nodo
+    private Node<K, V> left;   // Referencia al hijo izquierdo del nodo
+    private Node<K, V> right;  // Referencia al hijo derecho del nodo
 
-    // Constructor
-    public Node(E data) {
-        this.data = data;
+    /**
+     * Constructor para crear un nuevo nodo con la clave y valor especificados.
+     *
+     * @param key   Prioridad
+     * @param value Valor del nodo en este caso el paciente
+     */
+    public Node(K key, V value) {
+        this.key = key;
+        this.value = value;
         this.left = null;
         this.right = null;
-        this.parent = null;
+    }
+    /**
+     * Obtiene la clave almacenada en el nodo.
+     *
+     * @return La clave del nodo.
+     */
+    public K getKey() {
+        return key;
     }
 
-    // Métodos getters y setters
-    public E getData() {
-        return data;
+    /**
+     * Obtiene el valor almacenado en el nodo.
+     *
+     * @return El valor almacenado en el nodo.
+     */
+    public V getValue() {
+        return value;
     }
 
-    public void setData(E data) {
-        this.data = data;
+    /**
+     * Establece la clave del nodo.
+     *
+     * @param key La clave a establecer.
+     */
+    public void setKey(K key) {
+        this.key = key;
     }
 
-    public Node<E> getLeft() {
+    /**
+     * Establece el valor del nodo.
+     *
+     * @param value El valor a establecer.
+     */
+    public void setValue(V value) {
+        this.value = value;
+    }
+
+    /**
+     * Obtiene la referencia al hijo izquierdo del nodo.
+     *
+     * @return La referencia al hijo izquierdo del nodo.
+     */
+    public Node<K, V> getLeft() {
         return left;
     }
 
-    public void setLeft(Node<E> left) {
+    /**
+     * Establece la referencia al hijo izquierdo del nodo.
+     *
+     * @param left La referencia al hijo izquierdo a establecer.
+     */
+    public void setLeft(Node<K, V> left) {
         this.left = left;
-        if (left != null) {
-            left.parent = this;
-        }
     }
 
-    public Node<E> getRight() {
+    /**
+     * Obtiene la referencia al hijo derecho del nodo.
+     *
+     * @return La referencia al hijo derecho del nodo.
+     */
+    public Node<K, V> getRight() {
         return right;
     }
 
-    public void setRight(Node<E> right) {
+    /**
+     * Establece la referencia al hijo derecho del nodo.
+     *
+     * @param right La referencia al hijo derecho a establecer.
+     */
+    public void setRight(Node<K, V> right) {
         this.right = right;
-        if (right != null) {
-            right.parent = this;
-        }
-    }
-
-    public Node<E> getParent() {
-        return parent;
-    }
-
-    public void setParent(Node<E> parent) {
-        this.parent = parent;
     }
 }
